@@ -4,6 +4,7 @@ import AmountInput from "./AmountInput";
 import CurrencySelect from "./CurrencySelect";
 import SwapButton from "./SwapButton";
 import ConversionResult from "./ConversionResult";
+import CurrencyLoadError from "./CurrencyLoadError";
 
 function CurrencyConverter() {
   const [amount, setAmount] = useState("1");
@@ -11,12 +12,20 @@ function CurrencyConverter() {
   const [toCurrency, setToCurrency] = useState("EGP");
   const [exchangeRate, setExchangeRate] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const [currencies, setCurrencies] = useState([]);
+  const [isCurrenciesLoading, setIsCurrenciesLoading] = useState(true);
+  const [currenciesRetry, setCurrenciesRetry] = useState(0);
+
+  const [error, setError] = useState("");
+  const [currenciesError, setCurrenciesError] = useState("");
 
   const handleSwap = () => {
     setFromCurrency(toCurrency);
     setToCurrency(fromCurrency);
+  };
+
+  const handleRetryCurrencies = () => {
+    setCurrenciesRetry((prev) => prev + 1);
   };
 
   // ****** API Calls ******
@@ -58,15 +67,28 @@ function CurrencyConverter() {
 
   useEffect(() => {
     const fetchCurrencies = async () => {
-      const res = await fetch("https://api.frankfurter.dev/v2/currencies");
+      try {
+        setIsCurrenciesLoading(true);
+        setCurrenciesError("");
 
-      const data = await res.json();
+        const res = await fetch("https://api.frankfurter.dev/v2/currencies");
 
-      setCurrencies(data);
+        if (!res.ok) {
+          throw new Error("Unable to fetch currencies.");
+        }
+
+        const data = await res.json();
+
+        setCurrencies(data);
+      } catch (error) {
+        setCurrenciesError(error.message);
+      } finally {
+        setIsCurrenciesLoading(false);
+      }
     };
 
     fetchCurrencies();
-  }, []);
+  }, [currenciesRetry]);
 
   return (
     <section className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
@@ -80,21 +102,31 @@ function CurrencyConverter() {
       <div className="space-y-5">
         <AmountInput amount={amount} onAmountChange={setAmount} />
 
-        <CurrencySelect
-          label="From"
-          currency={fromCurrency}
-          onCurrencyChange={setFromCurrency}
-          currencies={currencies}
-        />
+        {currenciesError ? (
+          <CurrencyLoadError
+            message={currenciesError}
+            onRetry={handleRetryCurrencies}
+            isLoading={isCurrenciesLoading}
+          />
+        ) : (
+          <>
+            <CurrencySelect
+              label="From"
+              currency={fromCurrency}
+              onCurrencyChange={setFromCurrency}
+              currencies={currencies}
+            />
 
-        <SwapButton onSwap={handleSwap} />
+            <SwapButton onSwap={handleSwap} />
 
-        <CurrencySelect
-          label="To"
-          currency={toCurrency}
-          onCurrencyChange={setToCurrency}
-          currencies={currencies}
-        />
+            <CurrencySelect
+              label="To"
+              currency={toCurrency}
+              onCurrencyChange={setToCurrency}
+              currencies={currencies}
+            />
+          </>
+        )}
 
         <ConversionResult
           amount={amount}

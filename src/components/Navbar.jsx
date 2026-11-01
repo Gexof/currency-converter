@@ -6,7 +6,7 @@ function Navbar() {
           Currency<span className="text-emerald-500">Flow</span>
         </h1>
 
-        <span className="text-sm text-zinc-500 dark:text-zinc-400">
+        <span className="hidden text-sm text-zinc-500 dark:text-zinc-400 sm:block">
           Exchange rates converter
         </span>
       </div>
