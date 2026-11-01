@@ -1,16 +1,105 @@
-# React + Vite
+# CurrencyFlow 💱
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A clean and responsive currency converter built with React and Tailwind CSS. Convert between different currencies using real-time exchange rates from the Frankfurter API.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Currency Conversion:** Convert between supported currencies.
+- **Live Exchange Rates:** Fetch the latest available exchange rates from the Frankfurter API.
+- **Currency Swapping:** Easily switch between the source and target currencies.
+- **Dynamic Currency Selection:** Browse and select from the available currencies.
+- **Light & Dark Mode:** Switch between themes with your preference saved in local storage.
+- **Responsive Design:** Optimized for desktop, tablet, and mobile screens.
+- **Loading States:** Skeleton loaders while fetching data.
+- **Error Handling:** Clear error messages and retry functionality.
+- **Input Validation:** Prevent invalid or negative amounts.
 
-## React Compiler
+## 🛠️ Built With
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- Vite
+- Tailwind CSS v4
+- JavaScript
+- Lucide React
+- Frankfurter API
 
-## Expanding the ESLint configuration
+## 🌐 API
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+This project uses the [Frankfurter API](https://frankfurter.dev/) to retrieve currency information and exchange rates.
+
+- **Currencies:** `https://api.frankfurter.dev/v2/currencies`
+- **Exchange Rates:** `https://api.frankfurter.dev/v2/rate/{from}/{to}`
+
+No API key is required.
+
+## 🚀 Getting Started
+
+Follow these steps to run the project locally.
+
+### Prerequisites
+
+- Node.js
+- npm
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/Gexof/currency-converter.git
+   ```
+
+2. Navigate to the project directory:
+
+   ```bash
+   cd currency-converter
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Open the local URL provided by Vite in your browser.
+
+## 📦 Available Scripts
+
+| Command           | Description                      |
+| ----------------- | -------------------------------- |
+| `npm run dev`     | Start the development server     |
+| `npm run build`   | Build the project for production |
+| `npm run preview` | Preview the production build     |
+| `npm run lint`    | Run ESLint                       |
+
+## 📁 Project Structure
+
+```text
+src/
+├── components/
+├── context/
+├── App.jsx
+├── main.jsx
+└── index.css
+```
+
+## 📌 Future Improvements
+
+- Add automated tests.
+- Improve accessibility.
+
+## 👨‍💻 Author
+
+**Mohamed Ashraf**
+
+- GitHub: [@Gexof](https://github.com/Gexof)
+
+---
+
+Built with ❤️ using React.

@@ -40,7 +40,7 @@ function ConversionResult({
         Converted Amount
       </p>
 
-      <h3 className="mt-2 break-words text-3xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
+      <h3 className="mt-2 wrap-break-word text-3xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
         {convertedAmount.toLocaleString("en-US", {
           maximumFractionDigits: 2,
         })}
