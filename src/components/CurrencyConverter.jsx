@@ -12,12 +12,14 @@ function CurrencyConverter() {
   const [exchangeRate, setExchangeRate] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [currencies, setCurrencies] = useState([]);
 
   const handleSwap = () => {
     setFromCurrency(toCurrency);
     setToCurrency(fromCurrency);
   };
 
+  // ****** API Calls ******
   useEffect(() => {
     const controller = new AbortController();
 
@@ -54,6 +56,18 @@ function CurrencyConverter() {
     return () => controller.abort();
   }, [fromCurrency, toCurrency]);
 
+  useEffect(() => {
+    const fetchCurrencies = async () => {
+      const res = await fetch("https://api.frankfurter.dev/v2/currencies");
+
+      const data = await res.json();
+
+      setCurrencies(data);
+    };
+
+    fetchCurrencies();
+  }, []);
+
   return (
     <section className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
       <div className="mb-6">
@@ -70,6 +84,7 @@ function CurrencyConverter() {
           label="From"
           currency={fromCurrency}
           onCurrencyChange={setFromCurrency}
+          currencies={currencies}
         />
 
         <SwapButton onSwap={handleSwap} />
@@ -78,6 +93,7 @@ function CurrencyConverter() {
           label="To"
           currency={toCurrency}
           onCurrencyChange={setToCurrency}
+          currencies={currencies}
         />
 
         <ConversionResult
