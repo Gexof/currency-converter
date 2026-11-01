@@ -18,7 +18,17 @@ function ConversionResult({
     );
   }
 
-  const convertedAmount = Number(amount) * exchangeRate;
+  const numericAmount = Number(amount);
+
+  if (!amount || !Number.isFinite(numericAmount) || numericAmount <= 0) {
+    return (
+      <p className="text-sm text-amber-600">
+        Please enter an amount greater than zero.
+      </p>
+    );
+  }
+
+  const convertedAmount = numericAmount * exchangeRate;
 
   return (
     <div className="rounded-xl bg-emerald-50 p-4 dark:bg-emerald-500/10">
@@ -29,7 +39,7 @@ function ConversionResult({
       <h3 className="mt-2 text-3xl font-bold text-emerald-600 dark:text-emerald-400">
         {convertedAmount.toLocaleString("en-US", {
           maximumFractionDigits: 2,
-        })}{" "}
+        })}
         {toCurrency}
       </h3>
 
