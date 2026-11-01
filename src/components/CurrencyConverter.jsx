@@ -5,18 +5,20 @@ import CurrencySelect from "./CurrencySelect";
 import SwapButton from "./SwapButton";
 import ConversionResult from "./ConversionResult";
 import CurrencyLoadError from "./CurrencyLoadError";
+import CurrencySelectSkeleton from "./CurrencySelectSkeleton";
 
 function CurrencyConverter() {
   const [amount, setAmount] = useState("1");
   const [fromCurrency, setFromCurrency] = useState("USD");
   const [toCurrency, setToCurrency] = useState("EGP");
+
   const [exchangeRate, setExchangeRate] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const [currencies, setCurrencies] = useState([]);
   const [isCurrenciesLoading, setIsCurrenciesLoading] = useState(true);
   const [currenciesRetry, setCurrenciesRetry] = useState(0);
-
-  const [error, setError] = useState("");
   const [currenciesError, setCurrenciesError] = useState("");
 
   const handleSwap = () => {
@@ -28,7 +30,7 @@ function CurrencyConverter() {
     setCurrenciesRetry((prev) => prev + 1);
   };
 
-  // ****** API Calls ******
+  // Fetch exchange rate
   useEffect(() => {
     const controller = new AbortController();
 
@@ -65,13 +67,18 @@ function CurrencyConverter() {
     return () => controller.abort();
   }, [fromCurrency, toCurrency]);
 
+  // Fetch supported currencies
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchCurrencies = async () => {
       try {
         setIsCurrenciesLoading(true);
         setCurrenciesError("");
 
-        const res = await fetch("https://api.frankfurter.dev/v2/currencies");
+        const res = await fetch("https://api.frankfurter.dev/v2/currencies", {
+          signal: controller.signal,
+        });
 
         if (!res.ok) {
           throw new Error("Unable to fetch currencies.");
@@ -81,17 +88,23 @@ function CurrencyConverter() {
 
         setCurrencies(data);
       } catch (error) {
-        setCurrenciesError(error.message);
+        if (error.name !== "AbortError") {
+          setCurrenciesError(error.message);
+        }
       } finally {
-        setIsCurrenciesLoading(false);
+        if (!controller.signal.aborted) {
+          setIsCurrenciesLoading(false);
+        }
       }
     };
 
     fetchCurrencies();
+
+    return () => controller.abort();
   }, [currenciesRetry]);
 
   return (
-    <section className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <section className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-6 dark:border-zinc-800 dark:bg-zinc-900">
       <div className="mb-6">
         <h2 className="text-2xl font-bold">Currency Converter</h2>
         <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
@@ -108,6 +121,8 @@ function CurrencyConverter() {
             onRetry={handleRetryCurrencies}
             isLoading={isCurrenciesLoading}
           />
+        ) : isCurrenciesLoading ? (
+          <CurrencySelectSkeleton />
         ) : (
           <>
             <CurrencySelect
@@ -128,14 +143,16 @@ function CurrencyConverter() {
           </>
         )}
 
-        <ConversionResult
-          amount={amount}
-          fromCurrency={fromCurrency}
-          toCurrency={toCurrency}
-          exchangeRate={exchangeRate}
-          isLoading={isLoading}
-          error={error}
-        />
+        {!currenciesError && !isCurrenciesLoading && (
+          <ConversionResult
+            amount={amount}
+            fromCurrency={fromCurrency}
+            toCurrency={toCurrency}
+            exchangeRate={exchangeRate}
+            isLoading={isLoading}
+            error={error}
+          />
+        )}
       </div>
     </section>
   );
