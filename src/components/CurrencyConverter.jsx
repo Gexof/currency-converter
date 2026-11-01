@@ -19,6 +19,8 @@ function CurrencyConverter() {
   };
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchCurrency = async () => {
       try {
         setIsLoading(true);
@@ -26,6 +28,7 @@ function CurrencyConverter() {
 
         const res = await fetch(
           `https://api.frankfurter.dev/v2/rate/${fromCurrency}/${toCurrency}`,
+          { signal: controller.signal },
         );
 
         if (!res.ok) {
@@ -36,13 +39,19 @@ function CurrencyConverter() {
 
         setExchangeRate(data.rate);
       } catch (error) {
-        setError(error.message);
+        if (error.name !== "AbortError") {
+          setError(error.message);
+        }
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchCurrency();
+
+    return () => controller.abort();
   }, [fromCurrency, toCurrency]);
 
   return (
