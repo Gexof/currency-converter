@@ -11,6 +11,7 @@ function CurrencyConverter() {
   const [toCurrency, setToCurrency] = useState("EGP");
   const [exchangeRate, setExchangeRate] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSwap = () => {
     setFromCurrency(toCurrency);
@@ -19,16 +20,26 @@ function CurrencyConverter() {
 
   useEffect(() => {
     const fetchCurrency = async () => {
-      setIsLoading(true);
+      try {
+        setIsLoading(true);
+        setError("");
 
-      const res = await fetch(
-        `https://api.frankfurter.dev/v2/rate/${fromCurrency}/${toCurrency}`,
-      );
+        const res = await fetch(
+          `https://api.frankfurter.dev/v2/rate/${fromCurrency}/${toCurrency}`,
+        );
 
-      const data = await res.json();
+        if (!res.ok) {
+          throw new Error("Unable to fetch exchange rate.");
+        }
 
-      setExchangeRate(data.rate);
-      setIsLoading(false);
+        const data = await res.json();
+
+        setExchangeRate(data.rate);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchCurrency();
@@ -66,6 +77,7 @@ function CurrencyConverter() {
           toCurrency={toCurrency}
           exchangeRate={exchangeRate}
           isLoading={isLoading}
+          error={error}
         />
       </div>
     </section>

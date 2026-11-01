@@ -6,10 +6,21 @@ function ConversionResult({
   toCurrency,
   exchangeRate,
   isLoading,
+  error,
 }) {
+  if (isLoading) return <ConversionResultSkelton />;
+
+  if (error) {
+    return (
+      <div className="rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-500/20 dark:bg-red-500/10">
+        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+      </div>
+    );
+  }
+
   const convertedAmount = Number(amount) * exchangeRate;
 
-  return !isLoading ? (
+  return (
     <div className="rounded-xl bg-emerald-50 p-4 dark:bg-emerald-500/10">
       <p className="text-sm text-zinc-500 dark:text-zinc-400">
         Converted Amount
@@ -26,8 +37,6 @@ function ConversionResult({
         1 {fromCurrency} = {exchangeRate} {toCurrency}
       </p>
     </div>
-  ) : (
-    <ConversionResultSkelton />
   );
 }
 
