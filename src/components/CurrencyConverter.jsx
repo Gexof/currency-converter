@@ -10,6 +10,7 @@ function CurrencyConverter() {
   const [fromCurrency, setFromCurrency] = useState("USD");
   const [toCurrency, setToCurrency] = useState("EGP");
   const [exchangeRate, setExchangeRate] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSwap = () => {
     setFromCurrency(toCurrency);
@@ -18,15 +19,16 @@ function CurrencyConverter() {
 
   useEffect(() => {
     const fetchCurrency = async () => {
+      setIsLoading(true);
+
       const res = await fetch(
         `https://api.frankfurter.dev/v2/rate/${fromCurrency}/${toCurrency}`,
       );
 
       const data = await res.json();
 
-      console.log(data);
-
       setExchangeRate(data.rate);
+      setIsLoading(false);
     };
 
     fetchCurrency();
@@ -63,6 +65,7 @@ function CurrencyConverter() {
           fromCurrency={fromCurrency}
           toCurrency={toCurrency}
           exchangeRate={exchangeRate}
+          isLoading={isLoading}
         />
       </div>
     </section>

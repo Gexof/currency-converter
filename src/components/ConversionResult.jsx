@@ -1,7 +1,15 @@
-function ConversionResult({ amount, fromCurrency, toCurrency, exchangeRate }) {
+import ConversionResultSkelton from "./ConversionResultSkelton";
+
+function ConversionResult({
+  amount,
+  fromCurrency,
+  toCurrency,
+  exchangeRate,
+  isLoading,
+}) {
   const convertedAmount = Number(amount) * exchangeRate;
 
-  return (
+  return !isLoading ? (
     <div className="rounded-xl bg-emerald-50 p-4 dark:bg-emerald-500/10">
       <p className="text-sm text-zinc-500 dark:text-zinc-400">
         Converted Amount
@@ -10,7 +18,7 @@ function ConversionResult({ amount, fromCurrency, toCurrency, exchangeRate }) {
       <h3 className="mt-2 text-3xl font-bold text-emerald-600 dark:text-emerald-400">
         {convertedAmount.toLocaleString("en-US", {
           maximumFractionDigits: 2,
-        })}
+        })}{" "}
         {toCurrency}
       </h3>
 
@@ -18,6 +26,8 @@ function ConversionResult({ amount, fromCurrency, toCurrency, exchangeRate }) {
         1 {fromCurrency} = {exchangeRate} {toCurrency}
       </p>
     </div>
+  ) : (
+    <ConversionResultSkelton />
   );
 }
 
