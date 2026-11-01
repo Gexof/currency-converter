@@ -1,7 +1,4 @@
-function ConversionResult({ amount, fromCurrency, toCurrency }) {
-  // Temporary exchange rate for UI testing
-  const exchangeRate = 50;
-
+function ConversionResult({ amount, fromCurrency, toCurrency, exchangeRate }) {
   const convertedAmount = Number(amount) * exchangeRate;
 
   return (
