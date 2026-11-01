@@ -1,4 +1,4 @@
-function ConversionResultSkelton() {
+function ConversionResultSkeleton() {
   return (
     <div className="animate-pulse rounded-xl bg-emerald-50 p-4 dark:bg-emerald-500/10">
       <div className="h-4 w-32 rounded bg-zinc-200 dark:bg-zinc-700" />
@@ -10,4 +10,4 @@ function ConversionResultSkelton() {
   );
 }
 
-export default ConversionResultSkelton;
+export default ConversionResultSkeleton;
